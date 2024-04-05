@@ -66,22 +66,22 @@ namespace Scrat
         /// Consomme le flux <paramref name="stream"/> et remplit les attributs de cette <see cref="MyImage"/>.
         /// </summary>
         /// <param name="stream">Le <see cref="Stream"/> depuis lequel récupérer les attributs.</param>
-        /// <exception cref="FormatException">Le flux ne contient pas une image BMP reconnaissable par <i>KayoEditor</i>.</exception>
+        /// <exception cref="FormatException">Le flux ne contient pas une image BMP reconnaissable par <i>Scrat</i>.</exception>
         private void ConsumeStream(Stream stream)
         {
             rawHeader = stream.ReadBytes(54);
 
             if (Type != "BM")
-                throw new FormatException("invalid magic file type!");
+                throw new FormatException("Format de fichier invalide");
 
             if (ColorDepth != 24)
-                throw new FormatException("KayoEditor can only load images with a depth of 24 bits");
+                throw new FormatException("Profondeur de couleur non prise en charge");
 
             rawPixels = stream.ReadBytes((int)(FileSize - StartOffset));
         }
 
         /// <summary>
-        /// Créé une instance d'<see cref="MyImage"/> à partir d'une hauteur <paramref name="height"/> et d'une largeur <paramref name="width"/>.
+        /// Créé une instance de <see cref="MyImage"/> à partir d'une hauteur <paramref name="height"/> et d'une largeur <paramref name="width"/>.
         /// <br/>L'image est automatiquement remplie de noir (composantes à 0).
         /// </summary>
         /// <param name="width">Largeur de l'image.</param>
