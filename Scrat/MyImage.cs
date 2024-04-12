@@ -1,4 +1,4 @@
-﻿using System;
+2﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -405,60 +405,59 @@ namespace Scrat
         /// <param name="reduceAntiAliasing">Applique un anti-aliasing en cas de rétrécissement (<paramref name="scale"/> < 1).</param>
         /// <returns>Une copie agrandie/rétrécie de cette <see cref="MyImage"/>.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Si <paramref name="scale"/> est inférieur ou égal à 0.</exception>
-        public MyImage Scale(float scale, bool reduceAntiAliasing = true)
-        {
-            if (scale == 0)
-                throw new ArgumentOutOfRangeException("scale", "scale must not be 0");
+          public MyImage Scale(float echelle)
+  {
+      if (echelle == 0)
+          throw new ArgumentOutOfRangeException("echelle", "indice d'agrandissement ne peut pas etre 0");
 
-            if (scale < 0)
-                throw new ArgumentOutOfRangeException("scale", "scale must be a positive number");
+      if (echelle < 0)
+          throw new ArgumentOutOfRangeException("echelle", "L'indice d'agrandissement doit etre positif");
 
-            MyImage source = this.Copy();
+      MyImage source = this.Copy();
 
-            if (scale == 1)
-                return source;
+      if (echelle == 1)
+          return source;
 
-            int newWidth = (int)(Width * scale);
-            int newHeight = (int)(Height * scale);
+      int newWidth = (int)(Width * echelle);
+      int newHeight = (int)(Height * echelle);
 
-            if (newWidth == 0)
-                newWidth = 1;
+      if (newWidth == 0)
+      { newWidth = 1; }
 
-            if (newHeight == 0)
-                newHeight = 1;
+      if (newHeight == 0)
+      { newHeight = 1; }
 
-            if (scale < 1 && reduceAntiAliasing)
-            {
-                // si on réduit, on met dans les pixels en haut à gauche de chaque groupe la moyenne des pixels du groupe
+      if (echelle < 1)// cas de rétrécissement image
+      {
+          // si on réduit, on met dans les pixels en haut à gauche de chaque groupe la moyenne des pixels du groupe
 
-                int convolSize = (int)Math.Ceiling(1 / scale);
-                float[,] kernel = new float[convolSize, convolSize];
-                float coef = 1f / kernel.Length;    // 1f = 1 float
+          int convolSize = (int)Math.Ceiling(1 / echelle);
+          float[,] kernel = new float[convolSize, convolSize];
+          float coef = 1f / kernel.Length;    // 1f = 1 float
 
-                for (int y = 0; y < convolSize; y++)
-                {
-                    for (int x = 0; x < convolSize; x++)
-                    {
-                        kernel[y, x] = coef;
-                    }
-                }
+          for (int y = 0; y < convolSize; y++)
+          {
+              for (int x = 0; x < convolSize; x++)
+              {
+                  kernel[y, x] = coef;
+              }
+          }
 
-                source = source.ApplyKernel(kernel, Convolution.KernelOrigin.TopLeft, Convolution.EdgeProcessing.Extend);
-            }
+          source = source.ApplyKernel(kernel, Convolution.KernelOrigin.TopLeft, Convolution.EdgeProcessing.Extend);
+      }
 
-            MyImage result = new MyImage(newWidth, newHeight);
+      MyImage result = new MyImage(newWidth, newHeight);
 
-            for (int x = 0; x < newWidth; x++)
-            {
-                for (int y = 0; y < newHeight; y++)
-                {
-                    result[x, y] = new Pixel(source[(int)(x / scale), (int)(y / scale)]);     // 1/2 = 0 ; 3/2 = 1
-                }
-            }
+      for (int x = 0; x < newWidth; x++)
+      {
+          for (int y = 0; y < newHeight; y++)
+          {
+              result[x, y] = new Pixel(source[(int)(x / echelle), (int)(y / echelle)]);     // 1/2 = 0 ; 3/2 = 1
+          }
+      }
 
-            return result;
-        }
-
+      return result;
+  }
         /// <summary>
         /// Applique un effet miroir sur cette <see cref="MyImage"/> (cette méthode créé une copie).
         /// </summary>
