@@ -1,4 +1,4 @@
-2﻿using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -164,10 +164,17 @@ namespace Scrat
         /// <param name="filename">Chemin de l'image à sauvegarder.</param>
         public void Save(string filename)
         {
-            using (FileStream stream = File.OpenWrite(filename))
+            try
             {
-                stream.Write(rawHeader, 0, rawHeader.Length);
-                stream.Write(rawPixels, 0, rawPixels.Length);
+                using (FileStream stream = File.OpenWrite(filename))
+                {
+                    stream.Write(rawHeader, 0, rawHeader.Length);
+                    stream.Write(rawPixels, 0, rawPixels.Length);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -518,7 +525,7 @@ namespace Scrat
         public MyImage AddSticker(MyImage sticker)
         {
             MyImage result = this.Copy();
-            sticker = sticker.Scale((float)this.Width / sticker.Width, false);
+            sticker = sticker.Scale((float)this.Width / sticker.Width);
 
             for (int x = 0; x < Width; x++)
             {
