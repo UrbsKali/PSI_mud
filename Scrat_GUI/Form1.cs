@@ -2,6 +2,7 @@ using System.Windows.Forms;
 using System;
 using Scrat;
 using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.WindowsAPICodePack.Dialogs;
 namespace Oscour_GUI
 {
     public partial class Form1 : Form
@@ -12,6 +13,8 @@ namespace Oscour_GUI
         }
 
         string path = ""; // Path to the image 
+        string path2 = ""; // Path to the image
+        int nb = 0; // Number of the image
         private void button1_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog dlg = new OpenFileDialog())
@@ -28,6 +31,8 @@ namespace Oscour_GUI
                     this.Controls.Add(pb_bmp);
                 }
             }
+            histo();
+            histo();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -44,12 +49,14 @@ namespace Oscour_GUI
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);
             MyImage res = tmp.Greyscale();
-            res.Save("C:/Users/Mattheo/Desktop/Valeurs/output.bmp");
-            path = "C:/Users/Mattheo/Desktop/Valeurs/output.bmp";
+            res.Save("output.bmp");
+            path = "output.bmp";
             // Add the new control to its parent's controls collection
 
             pb_bmp.Image = new Bitmap(path);
             this.Controls.Add(pb_bmp);
+            histo();
+            histo();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -57,12 +64,14 @@ namespace Oscour_GUI
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);
             MyImage res = tmp.Rotate(Convert.ToInt32(Math.Round(nd_rotate.Value, 0)));
-            res.Save("C:/Users/Mattheo/Desktop/Valeurs/output.bmp");
-            path = "C:/Users/Mattheo/Desktop/Valeurs/output.bmp";
+            res.Save("output.bmp");
+            path = "output.bmp";
             // Add the new control to its parent's controls collection
 
             pb_bmp.Image = new Bitmap(path);
             this.Controls.Add(pb_bmp);
+            histo();
+            histo();
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -70,12 +79,14 @@ namespace Oscour_GUI
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);
             MyImage res = tmp.BlackAndWhite();
-            res.Save("C:/Users/Mattheo/Desktop/Valeurs/output.bmp");
-            path = "C:/Users/Mattheo/Desktop/Valeurs/output.bmp";
+            res.Save("output.bmp");
+            path = "output.bmp";
             // Add the new control to its parent's controls collection
 
             pb_bmp.Image = new Bitmap(path);
             this.Controls.Add(pb_bmp);
+            histo();
+            histo();
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -83,12 +94,14 @@ namespace Oscour_GUI
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);
             MyImage res = tmp.Negative();
-            res.Save("C:/Users/Mattheo/Desktop/Valeurs/output.bmp");
-            path = "C:/Users/Mattheo/Desktop/Valeurs/output.bmp";
+            res.Save("output.bmp");
+            path = "output.bmp";
             // Add the new control to its parent's controls collection
 
             pb_bmp.Image = new Bitmap(path);
             this.Controls.Add(pb_bmp);
+            histo();
+            histo();
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -96,12 +109,14 @@ namespace Oscour_GUI
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);
             MyImage res = tmp.Invert();
-            res.Save("C:/Users/Mattheo/Desktop/Valeurs/output.bmp");
-            path = "C:/Users/Mattheo/Desktop/Valeurs/output.bmp";
+            res.Save("output.bmp");
+            path = "output.bmp";
             // Add the new control to its parent's controls collection
 
             pb_bmp.Image = new Bitmap(path);
             this.Controls.Add(pb_bmp);
+            histo();
+            histo();
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -125,17 +140,70 @@ namespace Oscour_GUI
             }
             MyImage tmp2 = new MyImage(path2);
             MyImage res = tmp.HideImageInside(tmp2);
-            res.Save("C:/Users/Mattheo/Desktop/Valeurs/output.bmp");
-            path = "C:/Users/Mattheo/Desktop/Valeurs/output.bmp";
+            res.Save("output.bmp");
+            path = "output.bmp";
             // Add the new control to its parent's controls collection
 
             pb_bmp.Image = new Bitmap(path);
             this.Controls.Add(pb_bmp);
+            histo();
+            histo();
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void histo()
         {
+            pb_histo.Image = null;
+            MyImage tmp = new MyImage(path);
+            MyImage res = tmp.Histogram();
+            res.Save("histo.bmp");
+            // Add the new control to its parent's controls collection
 
+            pb_histo.Image = new Bitmap("histo.bmp");
+            this.Controls.Add(pb_histo);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            pb_bmp.Image = null;
+            MyImage tmp = new MyImage(path);
+            MyImage res = tmp.Scale(Convert.ToInt32(Math.Round(nd_scale.Value, 0)));
+            res.Save("output.bmp");
+            path = "output.bmp";
+            // Add the new control to its parent's controls collection
+
+            pb_bmp.Image = new Bitmap(path);
+            this.Controls.Add(pb_bmp);
+            histo();
+            histo();
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = "C:\\Users";
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                string path2 = dialog.FileName + "/sortie.bmp";
+                MyImage tmp = new MyImage(path);
+                tmp.Save(path2);
+            }
+
+        }
+
+        private void bttn_montrer_Click(object sender, EventArgs e)
+        {
+            pb_bmp.Image = null;
+            MyImage tmp = new MyImage(path);
+            MyImage res = tmp.GetHiddenImage();
+            res.Save("output.bmp");
+            path = "output.bmp";
+            // Add the new control to its parent's controls collection
+
+            pb_bmp.Image = new Bitmap(path);
+            this.Controls.Add(pb_bmp);
+            histo();
+            histo();
         }
     }
 }
