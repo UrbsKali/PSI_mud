@@ -1,50 +1,44 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Text;
 
 namespace Scrat
 {
     /// <summary>
-    /// Représente une image de profondeur 24-bits (composantes R, G et B).
+    /// Représente une image via ses composantes RGB
     /// </summary>
-    public class MyImage                                // en hexadécimal
+    public class MyImage
     {
-        public const int OFFSET_TYPE = 0x00;            // type de l'image
-        public const int OFFSET_FILESIZE = 0x02;        // taille totale du fichier (en octets)
-        public const int OFFSET_STARTOFFSET = 0x0a;     // position du premier pixel dans le fichier (en octets)
+        public const int OFF_TYPE = 0x00;            // type de l'image
+        public const int OFF_FILESIZE = 0x02;        // taille totale du fichier (en octets)
+        public const int OFF_STARTOFFSET = 0x0a;     // position du premier pixel dans le fichier (en octets)
 
-        public const int OFFSET_INFOHEADERSIZE = 0x0e;  // taille de la deuxième partie de l'entête
-        public const int OFFSET_WIDTH = 0x12;           // largeur de l'image en pixels
-        public const int OFFSET_HEIGHT = 0x16;          // hauteur de l'image en pixels
-        public const int OFFSET_COLORPLANES = 0x1a;     // vaudra toujours 1 pour un bitmap
-        public const int OFFSET_COLORDEPTH = 0x1c;      // nombre de bits par pixel (souvent 24 car 3 octets * 8 bits = 24)
+        public const int OFF_INFOHEADERSIZE = 0x0e;  // taille de la deuxième partie de l'entête
+        public const int OFF_WIDTH = 0x12;           // largeur de l'image en pixels
+        public const int OFF_HEIGHT = 0x16;          // hauteur de l'image en pixels
+        public const int OFF_COLORPLANES = 0x1a;     // vaudra toujours 1 pour un bitmap
+        public const int OFF_COLORDEPTH = 0x1c;      // nombre de bits par pixel (souvent 24 car 3 octets * 8 bits = 24)
 
-        byte[] rawHeader;                               // création du tableau de bytes/octets du header
-        byte[] rawPixels;                               // création du tableau de bytes/octets de l'image
+        byte[] rawHeader;                            // création du tableau de bytes/octets du header
+        byte[] rawPixels;                            // création du tableau de bytes/octets de l'image
 
-        public string Type => Encoding.ASCII.GetString(rawHeader.ExtractBytes(2, OFFSET_TYPE));     // Encoding.ASCII.GetString est une méthode permettant de transformer un tableau d'octets en string
-        public uint FileSize => Utils.LittleEndianToUInt(rawHeader, OFFSET_FILESIZE);
-        public uint StartOffset => Utils.LittleEndianToUInt(rawHeader, OFFSET_STARTOFFSET);
+        public string Type => Encoding.ASCII.GetString(rawHeader.ExtractBytes(2, OFF_TYPE)); // on extrait les 2 premiers octets du header, puis on les transforme en string
+        public uint FileSize => Utils.LittleEndianToUInt(rawHeader, OFF_FILESIZE);
+        public uint StartOffset => Utils.LittleEndianToUInt(rawHeader, OFF_STARTOFFSET);
 
-        public uint InfoHeaderSize => Utils.LittleEndianToUInt(rawHeader, OFFSET_INFOHEADERSIZE);
-        public int Width => Utils.LittleEndianToInt(rawHeader, OFFSET_WIDTH);
-        public int Height => Utils.LittleEndianToInt(rawHeader, OFFSET_HEIGHT);
-        public ushort ColorPlanes => Utils.LittleEndianToUShort(rawHeader, OFFSET_COLORPLANES);
-        public ushort ColorDepth => Utils.LittleEndianToUShort(rawHeader, OFFSET_COLORDEPTH);
-        public int Stride => (Width * ColorDepth / 8 + 3) / 4 * 4; // by dividing then multiplying, we floor to the nearest smallest integer, nombre d'octets pour décrire une ligne de pixels
-
-        /*public ReadOnlyCollection<byte> RawHeader => Array.AsReadOnly(rawHeader);
-        public ReadOnlyCollection<byte> RawPixels => Array.AsReadOnly(rawPixels);*/
+        public uint InfoHeaderSize => Utils.LittleEndianToUInt(rawHeader, OFF_INFOHEADERSIZE);
+        public int Width => Utils.LittleEndianToInt(rawHeader, OFF_WIDTH);
+        public int Height => Utils.LittleEndianToInt(rawHeader, OFF_HEIGHT);
+        public ushort ColorPlanes => Utils.LittleEndianToUShort(rawHeader, OFF_COLORPLANES);
+        public ushort ColorDepth => Utils.LittleEndianToUShort(rawHeader, OFF_COLORDEPTH);
+        public int TrueLineWidth => (Width * ColorDepth / 8 + 3) / 4 * 4; // nombre d'octets pour décrire une ligne de pixels, on divise puis multiplie pour arrondir à l'octet supérieur
 
         public byte[] RawHeader => rawHeader;
         public byte[] RawPixels => rawPixels;
 
         /// <summary>
-        /// Créé une instance d'<see cref="MyImage"/> à partir d'un fichier référencé par <paramref name="filename"/>.
+        /// Crée une instance d'<see cref="MyImage"/> à partir d'un fichier référencé par le chemin d'accès (<paramref name="filename"/>)
         /// </summary>
-        /// <param name="filename">Chemin de l'image à ouvrir.</param>
+        /// <param name="filename">Chemin de l'image à ouvrir</param>
         public MyImage(string filename)
         {
             using (FileStream stream = File.OpenRead(filename))     // using appelle stream.Close() automatiquement
@@ -54,19 +48,19 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Créé une instance d'<see cref="MyImage"/> dont le contenu est recupéré depuis le flux <paramref name="stream"/>.
+        /// Crée une instance d'<see cref="MyImage"/> dont le contenu est recupéré depuis le flux <paramref name="stream"/>
         /// </summary>
-        /// <param name="stream">Un <see cref="Stream"/> contenant les informations sur l'image.</param>
+        /// <param name="stream">Un <see cref="Stream"/> contenant les informations sur l'image</param>
         public MyImage(Stream stream)
         {
             ConsumeStream(stream);
         }
 
         /// <summary>
-        /// Consomme le flux <paramref name="stream"/> et remplit les attributs de cette <see cref="MyImage"/>.
+        /// Consomme le flux <paramref name="stream"/> et remplit les attributs de cette <see cref="MyImage"/>
         /// </summary>
-        /// <param name="stream">Le <see cref="Stream"/> depuis lequel récupérer les attributs.</param>
-        /// <exception cref="FormatException">Le flux ne contient pas une image BMP reconnaissable par <i>Scrat</i>.</exception>
+        /// <param name="stream">Le <see cref="Stream"/> depuis lequel récupérer les attributs</param>
+        /// <exception cref="FormatException">Le flux ne contient pas une image BMP reconnaissable par <i>Scrat</i></exception>
         private void ConsumeStream(Stream stream)
         {
             rawHeader = stream.ReadBytes(54);
@@ -81,33 +75,34 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Créé une instance de <see cref="MyImage"/> à partir d'une hauteur <paramref name="height"/> et d'une largeur <paramref name="width"/>.
-        /// <br/>L'image est automatiquement remplie de noir (composantes à 0).
+        /// Crée une instance de <see cref="MyImage"/> à partir d'une hauteur <paramref name="height"/> et d'une largeur <paramref name="width"/>
+        /// <br/>L'image est remplie de noir
         /// </summary>
-        /// <param name="width">Largeur de l'image.</param>
-        /// <param name="height">Hauteur de l'image.</param>
+        /// <param name="width">Largeur de l'image</param>
+        /// <param name="height">Hauteur de l'image</param>
         public MyImage(int width, int height)
         {
             rawHeader = new byte[54];
 
-            rawHeader.InsertBytes(Encoding.ASCII.GetBytes("BM"), OFFSET_TYPE);      // Encoding.ASCII.GetBytes est une méthode permettant de transformer un string en tableau octets
-            rawHeader.InsertBytes(Utils.UIntToLittleEndian((uint)rawHeader.Length), OFFSET_STARTOFFSET);
+            rawHeader.InsertBytes(Encoding.ASCII.GetBytes("BM"), OFF_TYPE);      // Encoding.ASCII.GetBytes est une méthode permettant de transformer un string en tableau octets
+            rawHeader.InsertBytes(Utils.UIntToLittleEndian((uint)rawHeader.Length), OFF_STARTOFFSET);
 
-            rawHeader.InsertBytes(Utils.UShortToLittleEndian(0x28), OFFSET_INFOHEADERSIZE); // hexadécimal car adresse
-            rawHeader.InsertBytes(Utils.IntToLittleEndian(width), OFFSET_WIDTH);
-            rawHeader.InsertBytes(Utils.IntToLittleEndian(height), OFFSET_HEIGHT);
-            rawHeader.InsertBytes(Utils.UShortToLittleEndian(1), OFFSET_COLORPLANES);
-            rawHeader.InsertBytes(Utils.UShortToLittleEndian(24), OFFSET_COLORDEPTH);
+            // On fabrique le header à partir des specs BMP
+            rawHeader.InsertBytes(Utils.UShortToLittleEndian(0x28), OFF_INFOHEADERSIZE); // hexadécimal car adresse
+            rawHeader.InsertBytes(Utils.IntToLittleEndian(width), OFF_WIDTH);
+            rawHeader.InsertBytes(Utils.IntToLittleEndian(height), OFF_HEIGHT);
+            rawHeader.InsertBytes(Utils.UShortToLittleEndian(1), OFF_COLORPLANES);
+            rawHeader.InsertBytes(Utils.UShortToLittleEndian(24), OFF_COLORDEPTH);
 
-            rawPixels = new byte[height * Stride];
+            rawPixels = new byte[height * TrueLineWidth];
 
-            rawHeader.InsertBytes(Utils.UIntToLittleEndian((uint)(rawHeader.Length + rawPixels.Length)), OFFSET_FILESIZE);
+            rawHeader.InsertBytes(Utils.UIntToLittleEndian((uint)(rawHeader.Length + rawPixels.Length)), OFF_FILESIZE);
         }
 
         /// <summary>
-        /// Créé une copie d'une instance d'<see cref="MyImage"/>.
+        /// Crée une copie d'une instance d'<see cref="MyImage"/>
         /// </summary>
-        /// <param name="original"><see cref="MyImage"/> à copier.</param>
+        /// <param name="original"><see cref="MyImage"/> à copier</param>
         public MyImage(MyImage original)
         {
             rawHeader = new byte[original.rawHeader.Length];
@@ -118,9 +113,9 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Créé une copie de cette instance d'<see cref="MyImage"/>.
+        /// Crée une copie de cette instance d'<see cref="MyImage"/>
         /// </summary>
-        /// <returns>Une nouvelle instance d'<see cref="MyImage"/> avec les même <see cref="Pixel"/>s.</returns>
+        /// <returns>Une nouvelle instance d'<see cref="MyImage"/> avec les même <see cref="Pixel"/>s</returns>
         /// <seealso cref="MyImage(MyImage)"/>
         public MyImage Copy()
         {
@@ -128,19 +123,19 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Calcule la position du 1er octet représentant le pixel à la position (<paramref name="x"/>, <paramref name="y"/>).
+        /// Calcule la position du 1er octet représentant le pixel à la position (<paramref name="x"/>, <paramref name="y"/>)
         /// </summary>
-        /// <param name="x">Position <i>x</i> du pixel.</param>
-        /// <param name="y">Position <i>x</i> du pixel.</param>
-        /// <returns>La position du 1er octet représentant ce pixel.</returns>
-        private int _position(int x, int y) => x * 3 + (Height - y - 1) * Stride;           // position du premier octet décrivant ce pixel
+        /// <param name="x">Position <i>x</i> du pixel</param>
+        /// <param name="y">Position <i>x</i> du pixel</param>
+        /// <returns>La position du 1er octet représentant ce pixel</returns>
+        private int _position(int x, int y) => x * 3 + (Height - y - 1) * TrueLineWidth;           // position du premier octet décrivant ce pixel
 
         /// <summary>
-        /// Récupère le <see cref="Pixel"/> à une position donnée. 
+        /// Récupère le <see cref="Pixel"/> à une position donnée
         /// </summary>
-        /// <param name="x">Position <i>x</i>.</param>
-        /// <param name="y">Position <i>y</i>.</param>
-        /// <returns>Le <see cref="Pixel"/> contenant la couleur présente à la position donnée.</returns>
+        /// <param name="x">Position <i>x</i></param>
+        /// <param name="y">Position <i>y</i></param>
+        /// <returns>Le <see cref="Pixel"/> contenant la couleur présente à la position donnée</returns>
         public Pixel this[int x, int y] // la propriété c'est l'instance elle-même      similaire à static bool operator ==(...)
         { // imageOriginale[x, y] <=> imageOriginale._pixels[y, x]
             get
@@ -159,9 +154,9 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Sauvegarde cette <see cref="MyImage"/> dans le fichier indiqué par <paramref name="filename"/>. 
+        /// Sauvegarde cette <see cref="MyImage"/> dans le fichier indiqué par <paramref name="filename"/>
         /// </summary>
-        /// <param name="filename">Chemin de l'image à sauvegarder.</param>
+        /// <param name="filename">Chemin de l'image à sauvegarder</param>
         public void Save(string filename)
         {
             try
@@ -179,9 +174,9 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Transforme cette <see cref="MyImage"/> en nuances de gris (cette méthode créé une copie).
+        /// Transforme cette <see cref="MyImage"/> en nuances de gris (cette méthode Crée une copie)
         /// </summary>
-        /// <returns>Une copie en nuances de gris de cette <see cref="MyImage"/>.</returns>
+        /// <returns>Une copie en nuances de gris de cette <see cref="MyImage"/></returns>
         public MyImage Greyscale()
         {
             MyImage result = this.Copy();
@@ -198,9 +193,9 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Transforme cette <see cref="MyImage"/> en noir et blanc (cette méthode créé une copie).
+        /// Transforme cette <see cref="MyImage"/> en noir et blanc (cette méthode Crée une copie)
         /// </summary>
-        /// <returns>Une copie en noir et blanc de cette <see cref="MyImage"/>.</returns>
+        /// <returns>Une copie en noir et blanc de cette <see cref="MyImage"/></returns>
         public MyImage BlackAndWhite()
         {
             MyImage result = this.Copy();
@@ -217,9 +212,9 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Obtient le négatif de cette <see cref="MyImage"/> (cette méthode créé une copie).
+        /// Méthode pour obtenir le négatif de l'image
         /// </summary>
-        /// <returns>La copie en négatif de cette <see cref="MyImage"/>.</returns>
+        /// <returns>La copie en négatif de cette <see cref="MyImage"/></returns>
         public MyImage Negative()
         {
             MyImage result = this.Copy();
@@ -237,9 +232,9 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Inverse les composantes R et B de chaque <see cref="Pixel"/> de l'image (cette méthode créé une copie).
+        /// Méthode pour obtenir une copie inversée de l'image
         /// </summary>
-        /// <returns>Une copie de cette <see cref="MyImage"/> avec les composantes R et B inversées.</returns>
+        /// <returns>Une copie de cette instance d'<see cref="MyImage"/> avec les composantes inversées</returns>
         public MyImage Invert()
         {
             MyImage result = this.Copy();
@@ -257,15 +252,15 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Cache une image <paramref name="imageToHide"/> dans cette <see cref="MyImage"/>.
+        /// Cache une image <paramref name="imageToHide"/> dans cette instance d'<see cref="MyImage"/>
         /// </summary>
-        /// <param name="imageToHide">Image à cacher.</param>
-        /// <returns>Une copie de l'<see cref="MyImage"/> originale contenant les informations de <paramref name="imageToHide"/>.</returns>
+        /// <param name="imageToHide">Image à cacher</param>
+        /// <returns>Une copie de l'<see cref="MyImage"/> originale contenant les informations de <paramref name="imageToHide"/></returns>
         public MyImage HideImageInside(MyImage imageToHide)
         {
             MyImage result = this.Copy();
 
-            if (this.Width < imageToHide.Width || this.Height < imageToHide.Height)
+            if (this.Width < imageToHide.Width || this.Height < imageToHide.Height) // si l'image à cacher est plus grande que l'image originale, on redimensionne
             {
                 float scaleX = imageToHide.Width / this.Width;
                 float scaleY = imageToHide.Height / this.Height;
@@ -286,6 +281,8 @@ namespace Scrat
                     }
 
                     Pixel pixel = result[x, y];
+                    // On va cacher les 4 bits de poids fort de chaque composante de toHide dans les 4 bits de poids faible de chaque composante de pixel
+                    // On va donc écraser les 4 bits de poids faible de pixel, pour y mettre les 4 bits de poids fort de toHide
                     byte r = (byte)((pixel.R & 0b11110000) + ((toHide.R >> 4) & 0b00001111));
                     byte g = (byte)((pixel.G & 0b11110000) + ((toHide.G >> 4) & 0b00001111));
                     byte b = (byte)((pixel.B & 0b11110000) + ((toHide.B >> 4) & 0b00001111));
@@ -298,12 +295,12 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Produit l'histogramme de cette <see cref="MyImage"/>.
+        /// Produit l'histogramme de cette <see cref="MyImage"/>
         /// </summary>
-        /// <param name="channel_r">Inclure la composante rouge.</param>
-        /// <param name="channel_g">Inclure la composante verte.</param>
-        /// <param name="channel_b">Inclure la composante bleue.</param>
-        /// <returns>Un histogramme de cette <see cref="MyImage"/>.</returns>
+        /// <param name="channel_r">Inclure la composante rouge</param>
+        /// <param name="channel_g">Inclure la composante verte</param>
+        /// <param name="channel_b">Inclure la composante bleue</param>
+        /// <returns>Un histogramme de cette <see cref="MyImage"/></returns>
         public MyImage Histogram(bool channel_r = true, bool channel_g = true, bool channel_b = true)
         {
             MyImage result = new MyImage(256, 100);
@@ -353,9 +350,9 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Récupère l'image cachée dans cette <see cref="MyImage"/> par <see cref="HideImageInside(MyImage)"/>.
+        /// Récupère l'image cachée dans cette <see cref="MyImage"/> par <see cref="HideImageInside(MyImage)"/>
         /// </summary>
-        /// <returns>L'image cachée par <see cref="HideImageInside(MyImage)"/>.</returns>
+        /// <returns>L'image cachée par <see cref="HideImageInside(MyImage)"/></returns>
         public MyImage GetHiddenImage()
         {
             MyImage result = this.Copy();
@@ -365,6 +362,7 @@ namespace Scrat
                 for (int y = 0; y < Height; y++)
                 {
                     Pixel pixel = this[x, y];
+                    // On récupère les 4 bits de poids faible de chaque composante de pixel, qui contiennent les 4 bits de poids fort de l'image cachée
                     result[x, y] = new Pixel((byte)(pixel.R << 4), (byte)(pixel.G << 4), (byte)(pixel.B << 4));
                 }
             }
@@ -373,10 +371,10 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Tourne l'instance de l'<see cref="MyImage"/> selon <paramref name="angle"/>.
+        /// Tourne l'instance de l'<see cref="MyImage"/> selon <paramref name="angle"/>
         /// </summary>
-        /// <param name="angle">Angle de la rotation en degrés.</param>
-        /// <returns>Une copie de cette <see cref="MyImage"/> tournée de <paramref name="angle"/> degrés.</returns>
+        /// <param name="angle">Angle de la rotation en degrés</param>
+        /// <returns>Une copie de cette <see cref="MyImage"/> tournée de <paramref name="angle"/> degrés</returns>
         public MyImage Rotate(int angle)
         {
             double rad = angle * (double)Math.PI / 180;
@@ -406,149 +404,64 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Agrandit/rétrécit cette <see cref="MyImage"/> selon le facteur <paramref name="scale"/>.
+        /// Agrandit / rétrécit cette <see cref="MyImage"/> selon le facteur <paramref name="scale"/>
         /// </summary>
-        /// <param name="scale">Facteur d'agrandissement/de rétrécissement.</param>
-        /// <param name="reduceAntiAliasing">Applique un anti-aliasing en cas de rétrécissement (<paramref name="scale"/> < 1).</param>
-        /// <returns>Une copie agrandie/rétrécie de cette <see cref="MyImage"/>.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Si <paramref name="scale"/> est inférieur ou égal à 0.</exception>
-          public MyImage Scale(float echelle)
-  {
-      if (echelle == 0)
-          throw new ArgumentOutOfRangeException("echelle", "indice d'agrandissement ne peut pas etre 0");
-
-      if (echelle < 0)
-          throw new ArgumentOutOfRangeException("echelle", "L'indice d'agrandissement doit etre positif");
-
-      MyImage source = this.Copy();
-
-      if (echelle == 1)
-          return source;
-
-      int newWidth = (int)(Width * echelle);
-      int newHeight = (int)(Height * echelle);
-
-      if (newWidth == 0)
-      { newWidth = 1; }
-
-      if (newHeight == 0)
-      { newHeight = 1; }
-
-      if (echelle < 1)// cas de rétrécissement image
-      {
-          // si on réduit, on met dans les pixels en haut à gauche de chaque groupe la moyenne des pixels du groupe
-
-          int convolSize = (int)Math.Ceiling(1 / echelle);
-          float[,] kernel = new float[convolSize, convolSize];
-          float coef = 1f / kernel.Length;    // 1f = 1 float
-
-          for (int y = 0; y < convolSize; y++)
-          {
-              for (int x = 0; x < convolSize; x++)
-              {
-                  kernel[y, x] = coef;
-              }
-          }
-
-          source = source.ApplyKernel(kernel, Convolution.KernelOrigin.TopLeft, Convolution.EdgeProcessing.Extend);
-      }
-
-      MyImage result = new MyImage(newWidth, newHeight);
-
-      for (int x = 0; x < newWidth; x++)
-      {
-          for (int y = 0; y < newHeight; y++)
-          {
-              result[x, y] = new Pixel(source[(int)(x / echelle), (int)(y / echelle)]);     // 1/2 = 0 ; 3/2 = 1
-          }
-      }
-
-      return result;
-  }
-        /// <summary>
-        /// Applique un effet miroir sur cette <see cref="MyImage"/> (cette méthode créé une copie).
-        /// </summary>
-        /// <param name="mode">Direction de l'effet.</param>
-        /// <returns>Une copie de cette <see cref="MyImage"/> avec l'effet miroir sur la direction <paramref name="mode"/>.</returns>
-        public MyImage Flip(FlipMode mode)
+        /// <param name="scale">Facteur d'agrandissement / de rétrécissement</param>
+        /// <param name="reduceAntiAliasing">Applique un anti-aliasing en cas de rétrécissement (<paramref name="scale"/> < 1)</param>
+        /// <returns>Une copie agrandie/rétrécie de cette <see cref="MyImage"/></returns>
+        /// <exception cref="ArgumentOutOfRangeException">Si <paramref name="scale"/> est inférieur ou égal à 0</exception>
+        public MyImage Scale(float echelle)
         {
-            MyImage result = this.Copy();
+            if (echelle == 0)
+                throw new ArgumentOutOfRangeException("echelle", "0 n'est pas un facteur d'agrandissement valide");
 
-            for (int x = 0; x < Width; x++)
+            if (echelle < 0)
+                throw new ArgumentOutOfRangeException("echelle", "Les valeurs négatives ne sont pas supportées");
+
+            MyImage source = this.Copy();
+
+            if (echelle == 1)
+                return source;
+
+            int newWidth = (int)(Width * echelle);
+            int newHeight = (int)(Height * echelle);
+
+            if (newWidth == 0)
+            { newWidth = 1; }
+
+            if (newHeight == 0)
+            { newHeight = 1; }
+
+            if (echelle < 1)// cas de rétrécissement image
             {
-                for (int y = 0; y < Height; y++)
+                // si on réduit, on met dans les pixels en haut à gauche de chaque groupe la moyenne des pixels du groupe (pas très loin d'un boxblur)
+
+                int convolSize = (int)Math.Ceiling(1 / echelle);
+                float[,] kernel = new float[convolSize, convolSize];
+                float coef = 1f / kernel.Length;    // 1f = 1 float
+
+                for (int y = 0; y < convolSize; y++)
                 {
-                    int nx = x;
-                    int ny = y;
-
-                    if (/* vrai quand on change que x ou les 2 coords */mode == FlipMode.FlipX || mode == FlipMode.FlipBoth)
-                        nx = Width - x - 1;
-
-                    if (/* vrai quand on change que y ou les 2 coords */mode == FlipMode.FlipY || mode == FlipMode.FlipBoth)
-                        ny = Height - y - 1;
-
-                    result[nx, ny] = new Pixel(this[x, y]);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Remplace une couleur <paramref name="input"/> par une autre couleur <paramref name="output"/> (cette méthode créé une copie).
-        /// </summary>
-        /// <param name="input">La couleur à remplacer.</param>
-        /// <param name="output">Nouvelle couleur de remplacement.</param>
-        /// <returns>Une copie de cette <see cref="MyImage"/> ne contenant plus la couleur <paramref name="input"/>.</returns>
-        public MyImage ReplaceColor(Pixel input, Pixel output)
-        {
-            MyImage result = this.Copy();
-
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    if (this[x, y] == input)
-                        result[x, y] = output;
-                }
-            }
-
-            return result;
-        }
-
-        private static Pixel BackgroundStickerPixel = new Pixel(230, 14, 249);
-        /// <summary>
-        /// Ajoute un <paramref name="sticker"/> sur cette <see cref="MyImage"/> (cette méthode créé une copie).
-        /// </summary>
-        /// <param name="sticker"><see cref="MyImage"/> à rajouter.</param>
-        /// <returns>Une copie de cette <see cref="MyImage"/> contenant le sticker.</returns>
-        public MyImage AddSticker(MyImage sticker)
-        {
-            MyImage result = this.Copy();
-            sticker = sticker.Scale((float)this.Width / sticker.Width);
-
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    Pixel pixel = BackgroundStickerPixel;
-                    if (x < sticker.Width && y < sticker.Height)
-                        pixel = sticker[x, y];
-
-                    if (pixel == BackgroundStickerPixel)
+                    for (int x = 0; x < convolSize; x++)
                     {
-                        pixel = this[x, y];
+                        kernel[y, x] = coef;
                     }
-
-                    result[x, y] = pixel;
                 }
+
+                source = source.ApplyKernel(kernel, Convolution.KernelOrigin.TopLeft, Convolution.EdgeProcessing.Extend);
             }
+
+            MyImage result = new MyImage(newWidth, newHeight);
+
+            for (int x = 0; x < newWidth; x++)
+                for (int y = 0; y < newHeight; y++)
+                    result[x, y] = new Pixel(source[(int)(x / echelle), (int)(y / echelle)]);
 
             return result;
         }
 
         /// <summary>
-        /// Vérifie l'égalité entre 2 <see cref="MyImage"/> (taille et <see cref="Pixel"/>s identiques).
+        /// Vérifie l'égalité entre 2 <see cref="MyImage"/>
         /// </summary>
         /// <seealso cref="Equals(object)"/>
         public static bool operator ==(MyImage a, MyImage b)
@@ -575,7 +488,7 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Vérifie l'inégalité entre 2 <see cref="MyImage"/> (taille ou <see cref="Pixel"/>s différents).
+        /// Vérifie l'inégalité entre 2 <see cref="MyImage"/> (taille ou <see cref="Pixel"/>s différents)
         /// </summary>
         /// <seealso cref="operator ==(MyImage, MyImage)"/>
         public static bool operator !=(MyImage a, MyImage b)
@@ -584,18 +497,12 @@ namespace Scrat
         }
 
         /// <summary>
-        /// Vérifie l'égalité de cette <see cref="MyImage"/> avec <paramref name="other"/>.
+        /// Vérifie l'égalité de cette instance d'<see cref="MyImage"/> avec <paramref name="i"/>
         /// </summary>
         /// <seealso cref="operator ==(MyImage, MyImage)"/>
-        public override bool Equals(object other)
+        public override bool Equals(object i)
         {
-            return other is MyImage && this == (MyImage)other;
-        }
-
-        public override int GetHashCode()
-        {
-            // méthode pour enlever le warning à cause des opérateurs == et !=.
-            return base.GetHashCode();
+            return i is MyImage && this == (MyImage)i;
         }
     }
 

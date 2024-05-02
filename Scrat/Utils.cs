@@ -1,127 +1,125 @@
-﻿using System;
-
-namespace Scrat
+﻿namespace Scrat
 {
     class Utils
     {
         /// <summary>
-        /// Transforme un tableau d'octets en <see cref="uint"/>.
+        /// Transforme un tableau d'octets en <see cref="uint"/>
         /// </summary>
-        /// <param name="array">Tableau d'octets � convertir.</param>
-        /// <param name="offset">Position de d�part.</param>
-        public static uint LittleEndianToUInt(byte[] array, int offset = 0)
+        /// <param name="input">Tableau d'octets à convertir</param>
+        /// <param name="offset">Position de départ.</param>
+        public static uint LittleEndianToUInt(byte[] input, int offset = 0)
         {
-            uint res = 0;
+            uint ret = 0;
             for (int i = 0; i < 4; i++)
-                res += array[offset + i] * (uint)Math.Pow(256, i);
+                ret += input[offset + i] * (uint)Math.Pow(256, i);
 
-            return res;
+            return ret;
         }
 
         /// <summary>
-        /// Transforme un tableau d'octets en <see cref="int"/>.
+        /// Transforme un tableau d'octets en <see cref="int"/>
         /// </summary>
-        /// <param name="array">Tableau d'octets � convertir.</param>
-        /// <param name="offset">Position de d�part.</param>
-        public static int LittleEndianToInt(byte[] array, int offset = 0)
+        /// <param name="input">Tableau d'octets à convertir</param>
+        /// <param name="offset">Position de départ</param>
+        public static int LittleEndianToInt(byte[] input, int offset = 0)
         {
-            int res = 0;
+            int ret = 0;
             for (int i = 0; i < 4; i++)
-                res += array[offset + i] * (int)Math.Pow(256, i);
+                ret += input[offset + i] * (int)Math.Pow(256, i);
 
-            return res;
+            return ret;
         }
 
         /// <summary>
-        /// Transforme un tableau d'octets en <see cref="ushort"/>.
+        /// Transforme un tableau d'octets en <see cref="ushort"/>
         /// </summary>
-        /// <param name="array">Tableau d'octets � convertir.</param>
-        /// <param name="offset">Position de d�part.</param>
-        public static ushort LittleEndianToUShort(byte[] array, int offset = 0)
+        /// <param name="input">Tableau d'octets à convertir</param>
+        /// <param name="offset">Position de départ</param>
+        public static ushort LittleEndianToUShort(byte[] input, int offset = 0)
         {
-            ushort res = 0;
+            ushort ret = 0;
             for (int i = 0; i < 2; i++)
-                res += (ushort)(array[offset + i] * Math.Pow(256, i));
+                ret += (ushort)(input[offset + i] * Math.Pow(256, i));
 
-            return res;
+            return ret;
         }
 
         /// <summary>
-        /// Transforme un tableau d'octets en <see cref="short"/>.
+        /// Transforme un tableau d'octets en <see cref="short"/>
         /// </summary>
-        /// <param name="array">Tableau d'octets � convertir.</param>
-        /// <param name="offset">Position de d�part.</param>
-        public static short LittleEndianToShort(byte[] array, int offset = 0)
+        /// <param name="input">Tableau d'octets à convertir</param>
+        /// <param name="offset">Position de départ</param>
+        public static short LittleEndianToShort(byte[] input, int offset = 0)
         {
-            short res = 0;
+            short ret = 0;
             for (int i = 0; i < 2; i++)
-                res += (short)(array[offset + i] * Math.Pow(256, i));
+                ret += (short)(input[offset + i] * Math.Pow(256, i));
 
-            return res;
+            return ret;
         }
 
         /// <summary>
-        /// Transforme un <see cref="int"/> en tableau d'octets.
+        /// Transforme un <see cref="int"/> en tableau d'octets
         /// </summary>
-        /// <param name="value">Valeur � convertir.</param>
-        public static byte[] IntToLittleEndian(int value)
+        /// <param name="input">Valeur à convertir</param>
+        public static byte[] IntToLittleEndian(int input)
         {
-            byte[] result = new byte[4];
+            byte[] ret = new byte[4];
             for (int i = 0; i < 4; i++)
             {
-                result[i] = (byte)(value % 256);
-                value /= 256;
+                ret[i] = (byte)(input % 256);
+                input /= 256;
             }
 
-            return result;
+            return ret;
         }
 
         /// <summary>
-        /// Transforme un <see cref="uint"/> en tableau d'octets.
+        /// Transforme un <see cref="uint"/> en tableau d'octets
         /// </summary>
-        /// <param name="value">Valeur � convertir.</param>
-        public static byte[] UIntToLittleEndian(uint value)
+        /// <param name="input">Valeur à convertir</param>
+        public static byte[] UIntToLittleEndian(uint input)
         {
-            byte[] result = new byte[4];
+            byte[] ret = new byte[4];
             for (int i = 0; i < 4; i++)
             {
-                result[i] = (byte)(value % 256);
-                value >>= 8; // value /= 256;
+                ret[i] = (byte)(input % 256);
+                input >>= 8; // value /= 256;
             }
 
-            return result;
+            return ret;
         }
 
         /// <summary>
         /// Transforme un <see cref="short"/> en tableau d'octets.
         /// </summary>
-        /// <param name="value">short � convertir.</param>
-        public static byte[] ShortToLittleEndian(short value)
+        /// <param name="input">short à convertir.</param>
+        public static byte[] ShortToLittleEndian(short input)
         {
-            byte[] result = new byte[2];
+            byte[] ret = new byte[2];
             for (int i = 0; i < 2; i++)
             {
-                result[i] = (byte)(value % 256);
-                value /= 256;
+                ret[i] = (byte)(input % 256);
+                input /= 256;
             }
 
-            return result;
+            return ret;
         }
 
         /// <summary>
         /// Transforme un <see cref="ushort"/> en tableau d'octets.
         /// </summary>
-        /// <param name="value">ushort � convertir.</param>
-        public static byte[] UShortToLittleEndian(ushort value)
+        /// <param name="input">ushort à convertir.</param>
+        public static byte[] UShortToLittleEndian(ushort input)
         {
-            byte[] result = new byte[2];
+            byte[] ret = new byte[2];
             for (int i = 0; i < 2; i++)
             {
-                result[i] = (byte)(value % 256);
-                value /= 256;
+                ret[i] = (byte)(input % 256);
+                input /= 256;
             }
 
-            return result;
+            return ret;
         }
     }
 }

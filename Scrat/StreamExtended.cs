@@ -2,7 +2,10 @@
 
 namespace Scrat
 {
-    public static class Extensions
+    /// <summary>
+    /// Méthodes supplémentaires pour la classe <see cref="Stream"/>.
+    /// </summary>
+    public static class StreamExtended
     {
         /// <summary>
         /// Lit <paramref name="length"/> octets depuis le flux d'entrée.

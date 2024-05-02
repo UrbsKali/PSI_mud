@@ -12,7 +12,7 @@ namespace Oscour_GUI
             InitializeComponent();
         }
 
-        string path = ""; // chemin de l'image à traiter
+        string path = ""; // chemin de l'image ï¿½ traiter
         private void button1_Click(object sender, EventArgs e) // ouvrir une image
         {
             using (OpenFileDialog dlg = new OpenFileDialog())
@@ -53,7 +53,7 @@ namespace Oscour_GUI
             histo();
         }
 
-        private void button3_Click(object sender, EventArgs e) // rotation selon un angle donné
+        private void button3_Click(object sender, EventArgs e) // rotation selon un angle donnÃ©
         {
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);
@@ -79,7 +79,7 @@ namespace Oscour_GUI
             histo();
         }
 
-        private void button5_Click(object sender, EventArgs e) // filtre négatif
+        private void button5_Click(object sender, EventArgs e) // filtre nÃ©gatif
         {
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);
@@ -155,7 +155,7 @@ namespace Oscour_GUI
             histo();
         }
 
-        private void button1_Click_1(object sender, EventArgs e) //Permet de sauvegarder l'image dans un dossier spécifié
+        private void button1_Click_1(object sender, EventArgs e) //Permet de sauvegarder l'image dans un dossier spÃ©cifique
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
             dialog.InitialDirectory = "C:\\Users";
@@ -169,7 +169,7 @@ namespace Oscour_GUI
 
         }
 
-        private void bttn_montrer_Click(object sender, EventArgs e) //Permet de montrer l'image cachée dans une autre image
+        private void bttn_montrer_Click(object sender, EventArgs e) //Permet de montrer l'image cachÃ©e dans une autre image
         {
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);

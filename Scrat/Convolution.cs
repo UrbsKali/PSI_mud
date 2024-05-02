@@ -1,44 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Scrat;
+﻿using System.ComponentModel;
 
 namespace Scrat
 {
+    /// <summary>
+    /// Méthodes d'application de convolution sur une <see cref="MyImage"/>
+    /// </summary>
     public static class Convolution
     {
         private static Dictionary<Kernel, float[,]> kernels = new Dictionary<Kernel, float[,]>
         {
             {
-                Kernel.EdgeDetection1, new float[,]
-                {
-                    {  1,  0, -1 },
-                    {  0,  0,  0 },
-                    { -1, 0 ,  1 }
-                }
-            },
-            {
-                Kernel.EdgeDetection2, new float[,]
-                {
-                    {  0,  1,  0 },
-                    {  1, -4,  1 },
-                    {  0,  1,  0 }
-                }
-            },
-            {
-                Kernel.EdgeDetection3, new float[,]
+                Kernel.EdgeDetection, new float[,]
                 {
                      { -1, -1, -1 },
                      { -1,  8, -1 },
                      { -1, -1, -1 }
-                }
-            },
-            {
-                Kernel.Sharpen, new float[,]
-                {
-                    {  0, -1,  0 },
-                    { -1,  5, -1 },
-                    {  0, -1,  0 }
                 }
             },
             {
@@ -243,17 +219,9 @@ namespace Scrat
 
         public enum Kernel
         {
-            [Description("Détection des contours 1")]
-            EdgeDetection1,
 
-            [Description("Détection des contours 2")]
-            EdgeDetection2,
-
-            [Description("Détection des contours 3")]
-            EdgeDetection3,
-
-            [Description("Amélioration de la netteté")]
-            Sharpen,
+            [Description("Détection des contours")]
+            EdgeDetection,
 
             [Description("Flou simple")]
             BoxBlur,

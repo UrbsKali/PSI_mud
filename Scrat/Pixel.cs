@@ -1,7 +1,7 @@
 ﻿namespace Scrat
 {
     /// <summary>
-    /// Repr�sente une couleur selon 3 composantes RGB entre 0 et 255.
+    /// Représente une couleur selon 3 composantes RGB entre 0 et 255
     /// </summary>
     public class Pixel
     {
@@ -14,12 +14,15 @@
         public byte B => b;
 
         /// <summary>
-        /// Calcule la valeur en niveau de gris de ce pixel.
+        /// Calcule la valeur en niveau de gris de ce pixel
         /// </summary>
-        public Pixel Greyscale() => new Pixel((byte)((r + g + b) / 3)); // m�thode en 1 ligne
+        public Pixel Greyscale()
+        {
+            return new Pixel((byte)((r + g + b) / 3));
+        }
 
         /// <summary>
-        /// Cr�� un <see cref="Pixel"/> selon ses 3 composantes RGB.
+        /// Crée un <see cref="Pixel"/> selon ses 3 composantes RGB.
         /// </summary>
         public Pixel(byte r, byte g, byte b)
         {
@@ -29,30 +32,30 @@
         }
 
         /// <summary>
-        /// Cr�� un <see cref="Pixel"/> noir (3 composantes RGB � 0).
+        /// Crée un <see cref="Pixel"/> noir (3 composantes RGB à 0).
         /// </summary>
         public Pixel() : this(0, 0, 0) { }
 
         /// <summary>
-        /// Cr�� un <see cref="Pixel"/> selon son niveau de gris <paramref name="val"/> entre 0 et 255.
+        /// Crée un <see cref="Pixel"/> selon son niveau de gris <paramref name="val"/> entre 0 et 255.
         /// </summary>
         /// <param name="val">Niveau de gris.</param>
         public Pixel(byte val) : this(val, val, val) { }
 
         /// <summary>
-        /// Cr�� une copie du <see cref="Pixel"/> <paramref name="original"/>.
+        /// Crée une copie d'un <see cref="Pixel"/> déjà instancié <paramref name="p"/>.
         /// </summary>
-        /// <param name="original">Instance � copier.</param>
+        /// <param name="p">Instance à copier.</param>
         /// <seealso cref="Copy"/>
-        public Pixel(Pixel original)
+        public Pixel(Pixel p)
         {
-            r = original.r;
-            g = original.g;
-            b = original.b;
+            r = p.r;
+            g = p.g;
+            b = p.b;
         }
 
         /// <summary>
-        /// Cr�� une copie de ce <see cref="Pixel"/>.
+        /// Crée une copie du <see cref="Pixel"/>.
         /// </summary>
         /// <seealso cref="Pixel(Pixel)"/>
         public Pixel Copy()
@@ -61,7 +64,7 @@
         }
 
         /// <summary>
-        /// Repr�sentation textuelle de ce <see cref="Pixel"/> (composantes RGB).
+        /// Représentation textuelle du <see cref="Pixel"/> (composantes RGB).
         /// </summary>
         public override string ToString()
         {
@@ -69,7 +72,7 @@
         }
 
         /// <summary>
-        /// V�rifie l'�galit� entre 2 <see cref="Pixel"/> (composantes R, G et B �gales).
+        /// Compare deux <see cref="Pixel"/> pour vérifier leur égalité (composantes R, G et B identiques).
         /// </summary>
         /// <seealso cref="Equals(object)"/>
         public static bool operator ==(Pixel a, Pixel b)
@@ -78,7 +81,7 @@
         }
 
         /// <summary>
-        /// V�rifie l'in�galit� entre 2 <see cref="Pixel"/> (composantes R, G ou B diff�rentes).
+        /// Compare deux <see cref="Pixel"/> pour vérifier leur différence (composantes R, G ou B différentes).
         /// </summary>
         /// <seealso cref="operator ==(Pixel, Pixel)"/>
         public static bool operator !=(Pixel a, Pixel b)
@@ -87,18 +90,12 @@
         }
 
         /// <summary>
-        /// V�rifie l'�galit� entre ce <see cref="Pixel"/> et l'objet <paramref name="other"/>.
+        /// Compare deux <see cref="Pixel"/> pour vérifier leur égalité (composantes R, G et B identiques).
         /// </summary>
         /// <seealso cref="operator ==(Pixel, Pixel)"/>
-        public override bool Equals(object other)
+        public override bool Equals(object p)
         {
-            return other is Pixel && this == (Pixel)other;
-        }
-
-        public override int GetHashCode()
-        {
-            // m�thode pour enlever le warning � cause des op�rateurs == et !=.
-            return base.GetHashCode();
+            return p is Pixel && this == (Pixel)p;
         }
     }
 }
