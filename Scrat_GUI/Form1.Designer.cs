@@ -65,6 +65,7 @@
             // 
             // pb_bmp
             // 
+            pb_bmp.BorderStyle = BorderStyle.FixedSingle;
             pb_bmp.Location = new Point(14, 55);
             pb_bmp.Name = "pb_bmp";
             pb_bmp.Size = new Size(766, 501);
@@ -169,6 +170,7 @@
             // 
             // pb_histo
             // 
+            pb_histo.BorderStyle = BorderStyle.FixedSingle;
             pb_histo.Location = new Point(800, 31);
             pb_histo.Margin = new Padding(3, 4, 3, 4);
             pb_histo.Name = "pb_histo";
@@ -256,6 +258,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.LightGray;
             ClientSize = new Size(1023, 629);
             Controls.Add(bttn_fractale);
             Controls.Add(button10);
@@ -276,8 +279,9 @@
             Controls.Add(button2);
             Controls.Add(pb_bmp);
             Controls.Add(bttn_show);
+            FormBorderStyle = FormBorderStyle.SizableToolWindow;
             Name = "Form1";
-            Text = "Form1";
+            Text = "ScratEditor";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pb_bmp).EndInit();
             ((System.ComponentModel.ISupportInitialize)nd_rotate).EndInit();
