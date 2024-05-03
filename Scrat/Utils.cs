@@ -44,19 +44,7 @@
             return ret;
         }
 
-        /// <summary>
-        /// Transforme un tableau d'octets en <see cref="short"/>
-        /// </summary>
-        /// <param name="input">Tableau d'octets à convertir</param>
-        /// <param name="offset">Position de départ</param>
-        public static short LittleEndianToShort(byte[] input, int offset = 0)
-        {
-            short ret = 0;
-            for (int i = 0; i < 2; i++)
-                ret += (short)(input[offset + i] * Math.Pow(256, i));
 
-            return ret;
-        }
 
         /// <summary>
         /// Transforme un <see cref="int"/> en tableau d'octets
@@ -85,22 +73,6 @@
             {
                 ret[i] = (byte)(input % 256);
                 input >>= 8; // value /= 256;
-            }
-
-            return ret;
-        }
-
-        /// <summary>
-        /// Transforme un <see cref="short"/> en tableau d'octets.
-        /// </summary>
-        /// <param name="input">short à convertir.</param>
-        public static byte[] ShortToLittleEndian(short input)
-        {
-            byte[] ret = new byte[2];
-            for (int i = 0; i < 2; i++)
-            {
-                ret[i] = (byte)(input % 256);
-                input /= 256;
             }
 
             return ret;

@@ -229,7 +229,7 @@ namespace Oscour_GUI
         {
             pb_bmp.Image = null;
             MyImage tmp = new MyImage(path);
-            MyImage res = tmp.ApplyKernel(Convolution.Kernel.EdgeDetection3);
+            MyImage res = tmp.ApplyKernel(Convolution.Kernel.EdgeDetection);
             res.Save("output.bmp");
             path = "output.bmp";
 
