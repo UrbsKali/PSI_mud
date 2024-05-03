@@ -243,7 +243,7 @@ namespace Oscour_GUI
         {
             MyImage res = new MyImage(800, 800);
             Random random = new Random();
-            res = FractalGen.GenerateFractal(800, 800, new System.Numerics.Complex(random.Next(-1,0), random.Next(0,1)));
+            res = FractalGen.GenerateFractal(800, 800, new System.Numerics.Complex(-0.4, 0.6));
             res.Save("output.bmp");
             path = "output.bmp";
 
