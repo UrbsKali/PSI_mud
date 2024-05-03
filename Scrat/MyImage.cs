@@ -182,12 +182,9 @@ namespace Scrat
             MyImage result = this.Copy();
 
             for (int x = 0; x < Width; x++)
-            {
                 for (int y = 0; y < Height; y++)
-                {
                     result[x, y] = this[x, y].Greyscale();
-                }
-            }
+
 
             return result;
         }
@@ -201,12 +198,8 @@ namespace Scrat
             MyImage result = this.Copy();
 
             for (int x = 0; x < Width; x++)
-            {
                 for (int y = 0; y < Height; y++)
-                {
                     result[x, y] = this[x, y].Greyscale().R > 127 ? new Pixel(255) : new Pixel(0);
-                }
-            }
 
             return result;
         }
@@ -331,20 +324,13 @@ namespace Scrat
             int[] perc_b = !channel_b ? null : b.Select(x => x * 100 / max).ToArray(); // on transforme chaque valeur en pourcentage par rapport au max
 
             if (channel_r)   // alternative au Select
-            {
                 for (int i = 0; i < 256; i++)
-                {
                     perc_r[i] = r[i] * 100 / max;
-                }
-            }
 
             for (int x = 0; x < result.Width; x++)
-            {
                 for (int y = 0; y < result.Height; y++)
-                {
                     result[x, 99 - y] = new Pixel((byte)(channel_r && y < perc_r[x] * 2 ? 255 : 0), (byte)(channel_g && y < perc_g[x] * 2 ? 255 : 0), (byte)(channel_b && y < perc_b[x] * 2 ? 255 : 0));
-                }
-            }
+
 
             return result;
         }
@@ -394,9 +380,7 @@ namespace Scrat
                     double newY = (x - newWidth / 2) * sin + (y - newHeight / 2) * cos + Height / 2;
 
                     if (newX >= 0 && newX < Width && newY >= 0 && newY < Height)
-                    {
                         result[x, y] = this[(int)newX, (int)newY];
-                    }
                 }
             }
 
@@ -440,12 +424,8 @@ namespace Scrat
                 float coef = 1f / kernel.Length;    // 1f = 1 float
 
                 for (int y = 0; y < convolSize; y++)
-                {
                     for (int x = 0; x < convolSize; x++)
-                    {
                         kernel[y, x] = coef;
-                    }
-                }
 
                 source = source.ApplyKernel(kernel, Convolution.KernelOrigin.TopLeft, Convolution.EdgeProcessing.Extend);
             }
