@@ -6,7 +6,7 @@
         /// Transforme un tableau d'octets en <see cref="uint"/>
         /// </summary>
         /// <param name="input">Tableau d'octets à convertir</param>
-        /// <param name="offset">Position de départ.</param>
+        /// <param name="offset">Position de départ</param>
         public static uint LittleEndianToUInt(byte[] input, int offset = 0)
         {
             uint ret = 0;
