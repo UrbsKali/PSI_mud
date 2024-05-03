@@ -10,10 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAPICodePack.Shell" Version="1.1.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Scrat\Scrat.csproj" />
+    <ProjectReference Include="..\TestsUnitaires\TestsUnitaires.csproj" />
   </ItemGroup>
 
 </Project>

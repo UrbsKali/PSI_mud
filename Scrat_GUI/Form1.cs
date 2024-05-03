@@ -238,5 +238,19 @@ namespace Oscour_GUI
             histo();
             histo();
         }
+
+        private void bttn_fractale_Click(object sender, EventArgs e) //Générer une fractale de Julia
+        {
+            MyImage res = new MyImage(800, 800);
+            Random random = new Random();
+            res = FractalGen.GenerateFractal(800, 800, new System.Numerics.Complex(random.Next(-1,0), random.Next(0,1)));
+            res.Save("output.bmp");
+            path = "output.bmp";
+
+            pb_bmp.Image = new Bitmap(path);
+            this.Controls.Add(pb_bmp);
+            histo();
+            histo();
+        }
     }
 }

@@ -407,7 +407,6 @@ namespace Scrat
         /// Agrandit / rétrécit cette <see cref="MyImage"/> selon le facteur <paramref name="scale"/>
         /// </summary>
         /// <param name="scale">Facteur d'agrandissement / de rétrécissement</param>
-        /// <param name="reduceAntiAliasing">Applique un anti-aliasing en cas de rétrécissement (<paramref name="scale"/> < 1)</param>
         /// <returns>Une copie agrandie/rétrécie de cette <see cref="MyImage"/></returns>
         /// <exception cref="ArgumentOutOfRangeException">Si <paramref name="scale"/> est inférieur ou égal à 0</exception>
         public MyImage Scale(float echelle)

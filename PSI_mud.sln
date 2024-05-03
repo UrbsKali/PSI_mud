@@ -7,6 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrat", "Scrat\Scrat.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrat_GUI", "Scrat_GUI\Scrat_GUI.csproj", "{B44E7C79-D640-4E3E-913F-9EBCF64D2FD0}"
 	ProjectSection(ProjectDependencies) = postProject
+		{B0B77C9C-8F24-42EF-B597-73557CE9BEB6} = {B0B77C9C-8F24-42EF-B597-73557CE9BEB6}
+		{C78CC6A7-E692-4A4D-8A1D-E75D53D38651} = {C78CC6A7-E692-4A4D-8A1D-E75D53D38651}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsUnitaires", "TestsUnitaires\TestsUnitaires.csproj", "{B0B77C9C-8F24-42EF-B597-73557CE9BEB6}"
+	ProjectSection(ProjectDependencies) = postProject
 		{C78CC6A7-E692-4A4D-8A1D-E75D53D38651} = {C78CC6A7-E692-4A4D-8A1D-E75D53D38651}
 	EndProjectSection
 EndProject
@@ -24,6 +30,10 @@ Global
 		{B44E7C79-D640-4E3E-913F-9EBCF64D2FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B44E7C79-D640-4E3E-913F-9EBCF64D2FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B44E7C79-D640-4E3E-913F-9EBCF64D2FD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0B77C9C-8F24-42EF-B597-73557CE9BEB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0B77C9C-8F24-42EF-B597-73557CE9BEB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0B77C9C-8F24-42EF-B597-73557CE9BEB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0B77C9C-8F24-42EF-B597-73557CE9BEB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

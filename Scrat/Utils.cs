@@ -1,6 +1,6 @@
 ﻿namespace Scrat
 {
-    class Utils
+    public class Utils
     {
         /// <summary>
         /// Transforme un tableau d'octets en <see cref="uint"/>
